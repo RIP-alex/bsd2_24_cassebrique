@@ -1,30 +1,29 @@
 package cassebrique;
 
 import cassebrique.models.Balle;
-import cassebrique.models.Barre;
 import cassebrique.models.Brique;
+import cassebrique.models.Raquette;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.List;
 
-public class CasseBrique extends Canvas implements KeyListener {
+public class CasseBrique extends Canvas {
 
-    public JFrame fenetre = new JFrame();
-    public ArrayList<Balle> listeBalle = new ArrayList<>();
-    public ArrayList<Brique> listeBrique = new ArrayList<>();
-    public Barre barre;
-
-    public static final int LARGEUR = 500;
-    public static final int HAUTEUR = 700;
+    public static final int LARGEUR = 1200;
+    public static final int HAUTEUR = 500;
+    private final JFrame fenetre = new JFrame();
+    private ArrayList<Balle> listeBalle = new ArrayList<>();
+    private ArrayList<Brique> listeBrique = new ArrayList<>();
+    private final Raquette raquette;
 
     public CasseBrique() throws InterruptedException {
-
         this.fenetre.setSize(LARGEUR, HAUTEUR);
         this.setSize(LARGEUR, HAUTEUR);
-        this.setBounds(0,0,LARGEUR, HAUTEUR);
+        this.setBounds(0, 0, LARGEUR, HAUTEUR);
 
         this.fenetre.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -33,93 +32,133 @@ public class CasseBrique extends Canvas implements KeyListener {
         this.fenetre.setContentPane(panneau);
 
         this.setIgnoreRepaint(true);
-        this.setFocusable(false);
-        this.fenetre.pack();
+        this.setFocusable(true);
         this.fenetre.setResizable(false);
-        this.fenetre.requestFocus();
-        this.fenetre.addKeyListener(this);
+
+        raquette = new Raquette(LARGEUR / 2 - 50, HAUTEUR - 50, 100, 10);
+
+        this.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    raquette.deplacerGauche();
+                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    raquette.deplacerDroite(LARGEUR);
+                }
+            }
+        });
+
+        this.fenetre.pack();
+        this.requestFocus();
 
         this.fenetre.setVisible(true);
         this.createBufferStrategy(2);
 
+        initialiserBriques();
+
         lancerUnePartie();
     }
 
-    public void lancerUnePartie() throws InterruptedException {
-
-        listeBalle = new ArrayList<>();
-        listeBalle.add(new Balle(100,100,3,4));
-        listeBalle.add(new Balle(200,100,2,3));
-        listeBalle.add(new Balle(100,200,1,2));
-
-        barre = new Barre(
-                CasseBrique.LARGEUR / 2 - Barre.largeurDefaut / 2,
-                CasseBrique.HAUTEUR - 100);
-
-        listeBrique = new ArrayList<>();
-        for (int indexLigne = 0; indexLigne < 5; indexLigne ++) {
-            for (int indexColonne = 0; indexColonne < 7; indexColonne ++) {
-                Brique brique = new Brique(
-                        indexColonne * (Brique.largeurDefaut + 2),
-                        indexLigne * (Brique.hauteurDefaut + 2),
-                        Color.CYAN);
-                listeBrique.add(brique);
-            }
-        }
-
-        //la balle peut avoir une couleur differente
-        //ajouter un constructeur permettant de definir la couleur de la balle
-        //si aucune couleur n'est donnée (utilisation du premier constructeur) : la couleur est aléatoire
-        //    Math.random() = donne un nombre entre 0 et 1 (un double)
-        //    new Color(R, G , B)  prend 3 float en parametre (pour rappel un double est trop grand pour un float)
-        while(true) {
-
-            Graphics2D dessin = (Graphics2D)this.getBufferStrategy().getDrawGraphics();
-
-            dessin.setColor(Color.WHITE);
-            dessin.fillRect(0, 0, LARGEUR, HAUTEUR);
-
-            for(Balle balle : listeBalle) {
-                balle.deplacer();
-                balle.dessiner(dessin);
-            }
-
-            barre.dessiner(dessin);
-
-            for(Brique brique : listeBrique) {
-                brique.dessiner(dessin);
-            }
-
-            dessin.dispose();
-            this.getBufferStrategy().show();
-
-            Thread.sleep(1000 / 60);
-        }
-    }
-
-    //main : raccourci
     public static void main(String[] args) throws InterruptedException {
         new CasseBrique();
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
+    private void initialiserBriques() {
+        listeBrique = new ArrayList<>();
 
+        int nombreLignes = 6;
+        int nombreColonnes = 12;
+        int largeurBrique = 50;
+        int hauteurBrique = 20;
+        int espacementX = 5;
+        int espacementY = 5;
+        int margeSuperieure = 50;
+
+        int margeGauche = (LARGEUR - (nombreColonnes * (largeurBrique + espacementX) - espacementX)) / 2;
+
+        for (int ligne = 0; ligne < nombreLignes; ligne++) {
+            for (int colonne = 0; colonne < nombreColonnes; colonne++) {
+                int x = margeGauche + colonne * (largeurBrique + espacementX);
+                int y = margeSuperieure + ligne * (hauteurBrique + espacementY);
+
+                Color couleur;
+                switch (ligne) {
+                    case 0:
+                        couleur = Color.RED;
+                        break;
+                    case 1:
+                        couleur = Color.ORANGE;
+                        break;
+                    case 2:
+                        couleur = Color.YELLOW;
+                        break;
+                    case 3:
+                        couleur = Color.GREEN;
+                        break;
+                    case 4:
+                        couleur = Color.BLACK;
+                    default:
+                        couleur = Color.BLACK;
+                }
+
+                Brique brique = new Brique(x, y, largeurBrique, hauteurBrique, couleur);
+                listeBrique.add(brique);
+            }
+        }
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            barre.deplacementDroite();
-        }
+    public void lancerUnePartie() throws InterruptedException {
+        listeBalle = new ArrayList<>();
+        listeBalle.add(new Balle(LARGEUR / 2, HAUTEUR - 100, 3, -3));
 
-        if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-            barre.deplacementGauche();
+        while (true) {
+            Graphics2D dessin = (Graphics2D) this.getBufferStrategy().getDrawGraphics();
+
+            dessin.setColor(Color.WHITE);
+            dessin.fillRect(0, 0, LARGEUR, HAUTEUR);
+
+            for (Brique brique : listeBrique) {
+                brique.dessiner(dessin);
+            }
+
+            raquette.dessiner(dessin);
+
+            for (Balle balle : listeBalle) {
+                balle.deplacer();
+                balle.dessiner(dessin);
+            }
+
+            gererCollisions();
+
+            dessin.dispose();
+            this.getBufferStrategy().show();
+
+            Thread.sleep(1000 / 120);
         }
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
+    private void gererCollisions() {
+        for (int i = 0; i < listeBalle.size(); i++) {
+            Balle balle = listeBalle.get(i);
 
+            // Collision avec la raquette
+            if (balle.getRectangle().intersecte(raquette)) {
+                balle.setVitesseY(-balle.getVitesseY());
+            }
+
+            // Collision avec les briques
+            for (int j = 0; j < listeBrique.size(); j++) {
+                Brique brique = listeBrique.get(j);
+                if (balle.getRectangle().intersecte(brique)) {
+                    brique.impact();
+                    if (brique.estDetruite()) {
+                        listeBrique.remove(j);
+                        j--;
+                    }
+                    balle.inverserDirection();
+                    break;
+                }
+            }
+        }
     }
 }

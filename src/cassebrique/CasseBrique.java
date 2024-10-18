@@ -6,9 +6,11 @@ import cassebrique.models.Brique;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
-public class CasseBrique extends Canvas {
+public class CasseBrique extends Canvas implements KeyListener {
 
     public JFrame fenetre = new JFrame();
     public ArrayList<Balle> listeBalle = new ArrayList<>();
@@ -35,6 +37,7 @@ public class CasseBrique extends Canvas {
         this.fenetre.pack();
         this.fenetre.setResizable(false);
         this.fenetre.requestFocus();
+        this.fenetre.addKeyListener(this);
 
         this.fenetre.setVisible(true);
         this.createBufferStrategy(2);
@@ -99,4 +102,24 @@ public class CasseBrique extends Canvas {
         new CasseBrique();
     }
 
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+       if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+           System.out.println("droite");
+       }
+
+        if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+            System.out.println("gauche");
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
 }

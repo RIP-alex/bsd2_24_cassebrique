@@ -45,13 +45,24 @@ public class CasseBrique extends Canvas {
     public void lancerUnePartie() throws InterruptedException {
 
         listeBalle = new ArrayList<>();
+        listeBalle.add(new Balle(100,100,3,4));
+        listeBalle.add(new Balle(200,100,2,3));
+        listeBalle.add(new Balle(100,200,1,2));
+
         barre = new Barre(
                 CasseBrique.LARGEUR / 2 - Barre.largeurDefaut / 2,
                 CasseBrique.HAUTEUR - 100);
 
-        listeBalle.add(new Balle(100,100,3,4));
-        listeBalle.add(new Balle(200,100,2,3));
-        listeBalle.add(new Balle(100,200,1,2));
+        listeBrique = new ArrayList<>();
+        for (int indexLigne = 0; indexLigne < 5; indexLigne ++) {
+            for (int indexColonne = 0; indexColonne < 7; indexColonne ++) {
+                Brique brique = new Brique(
+                        indexColonne * (Brique.largeurDefaut + 2),
+                        indexLigne * (Brique.hauteurDefaut + 2),
+                        Color.CYAN);
+                listeBrique.add(brique);
+            }
+        }
 
         //la balle peut avoir une couleur differente
         //ajouter un constructeur permettant de definir la couleur de la balle
@@ -71,6 +82,10 @@ public class CasseBrique extends Canvas {
             }
 
             barre.dessiner(dessin);
+
+            for(Brique brique : listeBrique) {
+                brique.dessiner(dessin);
+            }
 
             dessin.dispose();
             this.getBufferStrategy().show();

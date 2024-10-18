@@ -1,6 +1,8 @@
 package cassebrique;
 
 import cassebrique.models.Balle;
+import cassebrique.models.Barre;
+import cassebrique.models.Brique;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +12,9 @@ public class CasseBrique extends Canvas {
 
     public JFrame fenetre = new JFrame();
     public ArrayList<Balle> listeBalle = new ArrayList<>();
+    public ArrayList<Brique> listeBrique = new ArrayList<>();
+    public Barre barre;
+
     public static final int LARGEUR = 500;
     public static final int HAUTEUR = 700;
 
@@ -40,6 +45,9 @@ public class CasseBrique extends Canvas {
     public void lancerUnePartie() throws InterruptedException {
 
         listeBalle = new ArrayList<>();
+        barre = new Barre(
+                CasseBrique.LARGEUR / 2 - Barre.largeurDefaut / 2,
+                CasseBrique.HAUTEUR - 100);
 
         listeBalle.add(new Balle(100,100,3,4));
         listeBalle.add(new Balle(200,100,2,3));
@@ -61,6 +69,8 @@ public class CasseBrique extends Canvas {
                 balle.deplacer();
                 balle.dessiner(dessin);
             }
+
+            barre.dessiner(dessin);
 
             dessin.dispose();
             this.getBufferStrategy().show();

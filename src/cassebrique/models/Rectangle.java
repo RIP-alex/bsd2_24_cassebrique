@@ -12,4 +12,9 @@ public class Rectangle extends Sprite {
         this.largeur = largeur;
         this.hauteur = hauteur;
     }
+
+    public void dessiner(Graphics2D dessin) {
+        dessin.setColor(couleur);
+        dessin.fillRect(x,y,largeur,hauteur);
+    }
 }

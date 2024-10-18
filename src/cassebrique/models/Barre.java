@@ -8,8 +8,8 @@ public class Barre extends Rectangle {
     public static int hauteurDefaut = 30;
     public static int largeurDefaut = 200;
 
-    public Barre(int x, int y, Color couleur) {
-        super(x, y, largeurDefaut, hauteurDefaut , couleur);
+    public Barre(int x, int y) {
+        super(x, y, largeurDefaut, hauteurDefaut , Color.BLUE);
         this.vitesse = 5;
     }
 

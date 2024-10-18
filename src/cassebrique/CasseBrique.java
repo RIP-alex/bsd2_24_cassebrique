@@ -109,12 +109,12 @@ public class CasseBrique extends Canvas implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-       if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-           System.out.println("droite");
-       }
+        if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            barre.deplacementDroite();
+        }
 
         if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-            System.out.println("gauche");
+            barre.deplacementGauche();
         }
     }
 

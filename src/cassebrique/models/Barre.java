@@ -13,6 +13,14 @@ public class Barre extends Rectangle {
         this.vitesse = 5;
     }
 
+    public void deplacementDroite() {
+        this.x += this.vitesse;
+    }
+
+    public void deplacementGauche() {
+        this.x -= this.vitesse;
+    }
+
     public int getVitesse() {
         return vitesse;
     }
